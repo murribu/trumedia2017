@@ -18,6 +18,11 @@ class PitchesSeeder extends Seeder{
     public function run(){
         $lockfile = "/tmp/pitches_seeder.lock";
 
+        ini_set("max_execution_time", 6000);
+        ini_set("memory_limit", "-1");
+
+        $lockfile = "/tmp/report_queue.lock";
+
         if(!file_exists($lockfile))
             $fh = fopen($lockfile, "w");
         else
@@ -29,7 +34,7 @@ class PitchesSeeder extends Seeder{
             dd("Lock file already in use");
         $there_is_more = RawDatum::select('id')->whereNull('processed_utc')->first();
         if ($there_is_more){
-            $raw_data = RawDatum::whereNull('processed_utc')->take(100)->get();
+            $raw_data = RawDatum::whereNull('processed_utc')->take(40000)->get();
             foreach($raw_data as $raw_datum){
                 $batter = Player::where('mlb_id', $raw_datum->batter_id)->first();
                 if (!$batter){
