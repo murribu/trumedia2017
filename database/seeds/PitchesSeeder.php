@@ -16,22 +16,18 @@ use App\Models\Umpire;
 
 class PitchesSeeder extends Seeder{
     public function run(){
-        $lockfile = "/tmp/pitches_seeder.lock";
+        $lockfile_str = "/tmp/pitches_seeder.lock";
 
         ini_set("max_execution_time", 6000);
         ini_set("memory_limit", "-1");
 
-        $lockfile = "/tmp/report_queue.lock";
-
-        if(!file_exists($lockfile))
-            $fh = fopen($lockfile, "w");
-        else
-            $fh = fopen($lockfile, "r");
-
-        if($fh === FALSE) dd("Unable to open lock file");
-
-        if(!flock($fh, LOCK_EX)) // another process is running
-            dd("Lock file already in use");
+        if(!file_exists($lockfile_str)){
+            $lockfile = fopen($lockfile_str, "w");
+        }else{
+            echo "LockFile exists. Exiting...";
+            exit;
+        }
+            
         $there_is_more = RawDatum::select('id')->whereNull('processed_utc')->first();
         if ($there_is_more){
             $raw_data = RawDatum::whereNull('processed_utc')->take(40000)->get();
@@ -175,7 +171,6 @@ class PitchesSeeder extends Seeder{
             }
         }
         
-        //This is unnecessary because the lock is released at the close of the script. But I wanted to be explicit.
-        fclose($fh);
+        unlink($lockfile_str);
     }
 }
