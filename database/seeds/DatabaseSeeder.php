@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
         if(!file_exists($lockfile_str)){
             $lockfile = fopen($lockfile_str, "w");
         }else{
-            echo "LockFile exists. Exiting...";
+            // echo "LockFile exists. Exiting...";
             exit;
         }
         
