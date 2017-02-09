@@ -100,6 +100,7 @@ class PitchesSeeder extends Seeder{
                 $pitch->pitcher_hand = $raw_datum->pitcher_hand;
                 $pitch->inning = $raw_datum->inning;
                 $pitch->catcher_id = $catcher->id;
+                $pitch->umpire_id = $umpire->id;
                 $pitch->times_faced = $raw_datum->times_faced;
                 $pitch->batter_pos = $raw_datum->batter_pos;
                 $position = Position::where('abbr', $raw_datum->batter_pos)->first();

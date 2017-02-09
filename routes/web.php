@@ -14,3 +14,7 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/pitches_by_umpire', 'UmpiresController@getPitches');
+Route::get('/umpire_report', 'UmpiresController@getUmpireReport');
+
