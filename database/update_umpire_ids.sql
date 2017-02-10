@@ -1,5 +1,6 @@
 #I accidentally left umpire_id out of the PitchesSeeder :/
 #This sql should fix that problem
+#If you are starting this project over, you should not need this script, because the omission was corrected.
 
 insert into umpires (mlb_id, name)
 select distinct umpire_id, umpire from raw_data where umpire_id not in (select mlb_id from umpires);
