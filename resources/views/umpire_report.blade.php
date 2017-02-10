@@ -3,6 +3,7 @@
     <head>
         <meta charset="UTF-8">
         <title>Umpire Report</title>
+        <link rel="stylesheet" href="/css/css.css">
     </head>
     <body>
         <svg class="chart"></svg>

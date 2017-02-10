@@ -1,9 +1,9 @@
 var margin = {top: 20, right: 30, bottom: 30, left: 40},
-    width = 960 - margin.left - margin.right,
+    width = 500 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-var x = d3.scale.ordinal()
-    .rangeRoundBands([0, width], .1);
+var x = d3.scale.linear()
+    .range([-width/2, width/2]);
     
 var y = d3.scale.linear()
     .range([height, 0]);
@@ -24,35 +24,48 @@ var chart = d3.select(".chart")
 
 d3.json('/pitches_by_umpire?umpire_id=50', function(error, data){
     data = data.map(treat);
-    x.domain(data.map(function(d) { return d.id; }));
-    y.domain([0, d3.max(data, function(d) { return d.pz; })]);
+    // x.domain(data.map(function(d) { return d.id; }));
+    // y.domain([0, d3.max(data, function(d) { return d.pz; })]);
+    x.domain([-25.5, 25.5]); // inches (one plate's width outside, to one plate's width inside)
+    y.domain([-1, 2]); //how many strike-zone-heights above the bottom of the strike zone
 
   chart.append("g")
       .attr("class", "x axis")
-      .attr("transform", "translate(0," + height + ")")
+      .attr("transform", "translate(" + width/2 + "," + height + ")")
       .call(xAxis);
 
   chart.append("g")
         .attr("class", "y axis")
-        .call(yAxis)
-    .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", ".71em")
-        .style("text-anchor", "end");
+        .call(yAxis);
 
-    chart.selectAll(".bar")
+    chart.append("g")
+        .attr("class", "zone")
+        .append("rect")
+        .attr("width", function(d){ return x(17); })
+        .attr("height", function(d) { return y(1); })
+        .attr("x", function(d){ return x(17); })
+        .attr("y", function(d){ return y(1); })
+    
+    chart.selectAll(".pitch")
             .data(data)
-        .enter().append("rect")
-            .attr("class", "bar")
-            .attr("x", function(d){ return x(d.id) })
-            .attr("y", function(d){ return y(d.pz) })
-            .attr("height", function(d){ return height - y(d.pz); })
-            .attr("width", x.rangeBand())
+        .enter().append("circle")
+            .attr("class", "pitch")
+            .attr("cx", function(d){ return x((d.px*12)+25.5) })
+            .attr("cy", function(d){ return y((d.pz - d.szb)/(d.szt - d.szb)) })
+            .attr("data-px", function(d){ return d.px; })
+            .attr("data-pz", function(d){ return d.pz; })
+            .attr("data-szt", function(d){ return d.szt; })
+            .attr("data-szb", function(d){ return d.szb; })
+            .attr("data-ord", function(d){ return d.ord; })
+            .attr("r", function(d){ return 2; })
+            .attr("fill", "red")
             ;
 });
 
 function treat(d) {
-    d.pz = (+d.pz)*100;
+    d.px = (+d.px);
+    d.pz = (+d.pz);
+    d.szb = (+d.szb);
+    d.szt = (+d.szt);
     return d;
 }
