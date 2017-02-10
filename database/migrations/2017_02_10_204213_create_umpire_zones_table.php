@@ -19,7 +19,8 @@ class CreateUmpireZonesTable extends Migration
             $table->foreign('umpire_id')->references('id')->on('umpires');
             $table->integer('zone_c27')->unsigned();
             $table->integer('zone_r27')->unsigned();
-            $table->integer('umpire_prob_called_strike')->unsigned();
+            $table->decimal('umpire_prob_called_strike',6,5)->unsigned();
+            $table->unique(['umpire_id', 'zone_c27', 'zone_r27']);
             $table->timestamps();
         });
     }

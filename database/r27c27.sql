@@ -7,3 +7,10 @@
 
 #I changed my mind. 6561 was too granular. I will try 243 instead.
 update pitches set r27 = ceil(greatest(least(18 - 9*((pz-szb)/(szt-szb)),26.9),0)), c27 = ceil(greatest(least(9*(px+(25.5/12))*12/17,26.9),0));
+
+replace into umpire_zones (umpire_id, zone_c27, zone_r27, umpire_prob_called_strike)
+select umpire_id, c27, r27, sum(case when pitch_result_id = 2 then 1 else 0 end)/count(id)
+from pitches
+where pitch_result_id in (2,7)
+and r27 is not null
+group by r27, c27, umpire_id;

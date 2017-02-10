@@ -54,6 +54,15 @@ class UmpiresController extends Controller {
     }
     
     public function getUmpireReport(){
+        
+        /*
+        This query can compare an umpire's prob_called_strike for the zone vs the pitch's prob_called_strike
+        select p.prob_called_strike, uz.umpire_prob_called_strike, p.* from pitches p
+            left join umpire_zones uz on uz.umpire_id = p.umpire_id and p.r27 = uz.zone_r27 and p.c27 = uz.zone_c27
+            where p.umpire_id = 50
+            limit 500
+        */
+        
         return view('umpire_report');
     }
 }
